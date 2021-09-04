@@ -1,19 +1,22 @@
 package search;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
 //        read inputs
-        String[] array = readInput();
+        String fileName = readArg(args, "--data");
+        List<String> inputs = XFile.readAll(fileName);
+
         while (true) {
             int select = MyInput.nextInt(createMenu());
             switch (select) {
                 case 1:
-                    findInfo(array);
+                    findInfo(inputs);
                     break;
                 case 2:
-                    printAll(array);
+                    printAll(inputs);
                     break;
                 case 0:
                     System.out.println("Bye!");
@@ -24,15 +27,13 @@ public class Main {
         }
     }
 
-    //read input from user
-    public static String[] readInput() {
-        int n = MyInput.nextInt("Enter the number of people:");
-        String[] array = new String[n];
-        System.out.println("Enter all people:");
-        for (int i = 0; i < n; i++) {
-            array[i] = MyInput.nextLine("").trim();
+    private static String readArg(String[] args, String arg){
+        for (int i = 0; i < args.length; i+=2) {
+            if(args[i].equals(arg)){
+                return args[i+1];
+            }
         }
-        return array;
+        return "";
     }
 
     //create simple program menu
@@ -44,46 +45,37 @@ public class Main {
                 "=".repeat(16);
     }
 
-
-
     //output all infos to the screen
-    private static void printAll(String[] array) {
+    private static void printAll(List<String> list) {
         System.out.println("==== List Of People ====");
-        for (String info : array) {
+        for (String info : list) {
             System.out.println(info);
         }
     }
 
     //read user query and find info
-    public static void findInfo(String[] array) {
+    public static void findInfo(List<String> list) {
         String query = MyInput.nextLine("Enter a name or email to search all suitable people:");
-        ArrayList<String> list = find(array, query);
+        ArrayList<String> newList = find(list, query);
         //output results
-        if (list.isEmpty()) {
+        if (newList.isEmpty()) {
             System.out.println("No matching people found.");
         } else {
             System.out.println("Found people:");
-            for (String s : list) {
+            for (String s : newList) {
                 System.out.println(s);
             }
         }
     }
 
     //search info in the array and return a list
-    public static ArrayList<String> find(String[] array, String info) {
-        ArrayList<String> list = new ArrayList<>();
-        for (String string : array) {
+    public static ArrayList<String> find(List<String> list, String info) {
+        ArrayList<String> newList = new ArrayList<>();
+        for (String string : list) {
             if (string.toLowerCase().contains(info.toLowerCase())) {
-                list.add(string);
+                newList.add(string);
             }
         }
-        return list;
+        return newList;
     }
-
-
-
-
-
-
-
 }
